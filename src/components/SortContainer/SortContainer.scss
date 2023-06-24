@@ -1,0 +1,35 @@
+.sort-container {
+  margin: 1rem;
+
+  .column-table {
+    display: flex;
+    align-items: flex-end;
+    padding: 0.25rem;
+    border: 1px solid white;
+    gap: 1px;
+
+    .column {
+      width: 100%;
+      min-width: 1px;
+      background: gray;
+
+      &:hover {
+        background: lightgray;
+      }
+
+      &.current {
+        background: lightblue;
+      }
+
+      &.sorted {
+        background: lightgreen;
+      }
+    }
+  }
+
+  .controls-container {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+}
