@@ -2,7 +2,7 @@
   "name": "sortify",
   "description": "Sortify is a web app that allows you to visualize various sorting algorithms in action. It is built with React, TypeScript, and Vite.",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -37,5 +37,11 @@
     "sass": "^1.63.6",
     "typescript": "^5.0.2",
     "vite": "^4.3.9"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kputnins/sortify"
+  },
+  "url": "https://kp-sortify.netlify.app/",
+  "license": "MIT"
 }
