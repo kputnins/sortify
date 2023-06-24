@@ -1,5 +1,6 @@
 {
   "name": "sortify",
+  "description": "Sortify is a web app that allows you to visualize various sorting algorithms in action. It is built with React, TypeScript, and Vite.",
   "private": true,
   "version": "0.0.0",
   "type": "module",
