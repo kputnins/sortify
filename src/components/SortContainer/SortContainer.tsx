@@ -1,89 +1,38 @@
-import {
-  Dispatch,
-  SetStateAction,
-  memo,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react';
+import { memo, useEffect, useState } from 'react';
+import classNames from 'classnames';
+
+import { UseSort } from '../../algorithms';
 
 import './SortContainer.scss';
-import classNames from 'classnames';
+
+const MAX_COLUMN_HEIGHT = 10;
 
 export interface SortContainerProps {
   title: string;
   sortedArrayOfNumbers: number[];
   randomizedArrayOfNumbers: number[];
-  maxColumnHeight: number;
+  useSort: UseSort;
 }
-
-interface NewSortParams {
-  arrayToSort: number[];
-  setSortedArray: Dispatch<SetStateAction<number[]>>;
-  timeout?: number;
-}
-
-let i = 0;
-let j = 0;
-
-const bubbleSort = ({ arrayToSort, setSortedArray }: NewSortParams) => {
-  const newArray = [...arrayToSort];
-
-  if (i < newArray.length) {
-    const elementToMove = newArray[j];
-
-    if (elementToMove > newArray[j + 1]) {
-      newArray[j] = newArray[j + 1];
-      newArray[j + 1] = elementToMove;
-
-      setSortedArray(newArray);
-    }
-
-    j++;
-
-    if (j === newArray.length - 1 - i) {
-      i++;
-      j = 0;
-    }
-  }
-};
 
 export const SortContainer: React.FC<SortContainerProps> = memo(
-  ({
-    title,
-    sortedArrayOfNumbers,
-    randomizedArrayOfNumbers,
-    maxColumnHeight,
-  }) => {
+  ({ title, sortedArrayOfNumbers, randomizedArrayOfNumbers, useSort }) => {
     const [sortedArray, setSortedArray] = useState<number[]>(
       randomizedArrayOfNumbers,
     );
     const [isSorting, setIsSorting] = useState<boolean>(false);
-    const [tickLength, setTickLength] = useState<number>(50);
-    const [tickCount, setTickCount] = useState<number>(0);
-    const [isSorted, setIsSorted] = useState<boolean>(false);
+    const [tickLength, setTickLength] = useState<number>(20);
 
-    useEffect(() => {
-      if (
-        !sortedArray.some(
-          (number, index) => number !== sortedArrayOfNumbers[index],
-        )
-      ) {
-        setIsSorted(true);
-        setIsSorting(false);
-      } else {
-        setIsSorted(false);
-      }
-    }, [sortedArray, sortedArrayOfNumbers]);
-
-    const tick = useCallback(() => {
-      bubbleSort({
+    const { tick, reset, tickCount, currentOuter, currentInner, isSorted } =
+      useSort({
         arrayToSort: sortedArray,
         setSortedArray,
-        timeout: tickLength,
       });
-      setTickCount((previousValue) => previousValue + 1);
-    }, [sortedArray, setSortedArray, tickLength]);
+
+    useEffect(() => {
+      if (isSorted) {
+        setIsSorting(false);
+      }
+    }, [isSorted]);
 
     useEffect(() => {
       let interval = 0;
@@ -102,18 +51,20 @@ export const SortContainer: React.FC<SortContainerProps> = memo(
     return (
       <div className="sort-container">
         <h2>
-          {title} - Passes: {i}; Steps: {tickCount}
+          {title} - Passes: {currentOuter}; Steps: {tickCount}
         </h2>
         <div className="column-table">
           {sortedArray.map((number, index) => (
             <div
               key={number}
               className={classNames('column', {
-                current: index === j,
-                sorted: index >= sortedArrayOfNumbers.length - i,
+                current: index === currentInner,
+                sorted: index >= sortedArrayOfNumbers.length - currentOuter,
               })}
               style={{
-                height: `${(maxColumnHeight / sortedArray.length) * number}rem`,
+                height: `${
+                  (MAX_COLUMN_HEIGHT / sortedArray.length) * number
+                }rem`,
               }}
             />
           ))}
@@ -142,10 +93,8 @@ export const SortContainer: React.FC<SortContainerProps> = memo(
           </button>
           <button
             onClick={() => {
-              i = 0;
-              j = 0;
               setSortedArray(randomizedArrayOfNumbers);
-              setTickCount(0);
+              reset();
             }}
           >
             Reset
@@ -156,7 +105,7 @@ export const SortContainer: React.FC<SortContainerProps> = memo(
               id="volume"
               name="volume"
               min="0"
-              max="500"
+              max="200"
               step="2"
               value={tickLength}
               onChange={(event) => setTickLength(Number(event.target.value))}

@@ -1,10 +1,10 @@
 import './App.scss';
+import { useBubbleSort } from './algorithms';
 import { SortContainer } from './components';
 import { RandomWithSeed } from './utils/Random';
 
 const seed = 420;
 const numberOfElements = 50;
-const maxColumnHeight = 10;
 
 RandomWithSeed.init(seed);
 
@@ -20,8 +20,8 @@ export const App = () => {
       <SortContainer
         title="Bubble Sort"
         sortedArrayOfNumbers={sortedArrayOfNumbers}
-        randomizedArrayOfNumbers={randomizedArrayOfNumbers}
-        maxColumnHeight={maxColumnHeight}
+        randomizedArrayOfNumbers={[...randomizedArrayOfNumbers]}
+        useSort={useBubbleSort}
       />
     </main>
   );
