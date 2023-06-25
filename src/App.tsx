@@ -19,7 +19,6 @@ export const App = () => {
       <h1>Sorting visualized</h1>
       <SortContainer
         title="Bubble Sort"
-        sortedArrayOfNumbers={sortedArrayOfNumbers}
         randomizedArrayOfNumbers={[...randomizedArrayOfNumbers]}
         useSort={useBubbleSort}
       />

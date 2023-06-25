@@ -10,7 +10,8 @@ export type UseSort = (params: UseSortParams) => {
   tick: () => void;
   reset: () => void;
   tickCount: number;
-  currentInner: number;
-  currentOuter: number;
   isSorted: boolean;
+  red?: number[];
+  green?: number[];
+  blue?: number[];
 };

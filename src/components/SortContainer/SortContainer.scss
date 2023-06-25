@@ -17,12 +17,16 @@
         background: lightgray;
       }
 
-      &.current {
-        background: lightblue;
+      &.red {
+        background: lightcoral;
       }
 
-      &.sorted {
+      &.green {
         background: lightgreen;
+      }
+
+      &.blue {
+        background: lightblue;
       }
     }
   }

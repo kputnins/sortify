@@ -9,24 +9,22 @@ const MAX_COLUMN_HEIGHT = 10;
 
 export interface SortContainerProps {
   title: string;
-  sortedArrayOfNumbers: number[];
   randomizedArrayOfNumbers: number[];
   useSort: UseSort;
 }
 
 export const SortContainer: React.FC<SortContainerProps> = memo(
-  ({ title, sortedArrayOfNumbers, randomizedArrayOfNumbers, useSort }) => {
+  ({ title, randomizedArrayOfNumbers, useSort }) => {
     const [sortedArray, setSortedArray] = useState<number[]>(
       randomizedArrayOfNumbers,
     );
     const [isSorting, setIsSorting] = useState<boolean>(false);
     const [tickLength, setTickLength] = useState<number>(20);
 
-    const { tick, reset, tickCount, currentOuter, currentInner, isSorted } =
-      useSort({
-        arrayToSort: sortedArray,
-        setSortedArray,
-      });
+    const { tick, reset, tickCount, isSorted, red, green, blue } = useSort({
+      arrayToSort: sortedArray,
+      setSortedArray,
+    });
 
     useEffect(() => {
       if (isSorted) {
@@ -51,15 +49,16 @@ export const SortContainer: React.FC<SortContainerProps> = memo(
     return (
       <div className="sort-container">
         <h2>
-          {title} - Passes: {currentOuter}; Steps: {tickCount}
+          {title} - Swaps: {tickCount}
         </h2>
         <div className="column-table">
           {sortedArray.map((number, index) => (
             <div
               key={number}
               className={classNames('column', {
-                current: index === currentInner,
-                sorted: index >= sortedArrayOfNumbers.length - currentOuter,
+                red: red?.includes(index),
+                green: green?.includes(index),
+                blue: blue?.includes(index),
               })}
               style={{
                 height: `${

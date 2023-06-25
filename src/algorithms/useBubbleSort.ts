@@ -66,8 +66,11 @@ export const useBubbleSort: UseSort = ({ arrayToSort, setSortedArray }) => {
     tick,
     reset,
     tickCount,
-    currentInner: inner.current || 0,
-    currentOuter: outer.current || 0,
+    blue: [inner.current || 0],
+    green:
+      (outer.current &&
+        Array.from(Array(arrayToSort.length).keys()).slice(-outer.current)) ||
+      [],
     isSorted,
   };
 };
