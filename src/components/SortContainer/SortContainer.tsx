@@ -15,16 +15,23 @@ export interface SortContainerProps {
 
 export const SortContainer: React.FC<SortContainerProps> = memo(
   ({ title, randomizedArrayOfNumbers, useSort }) => {
-    const [sortedArray, setSortedArray] = useState<number[]>(
-      randomizedArrayOfNumbers,
-    );
     const [isSorting, setIsSorting] = useState<boolean>(false);
     const [tickLength, setTickLength] = useState<number>(20);
 
-    const { tick, reset, tickCount, isSorted, red, green, blue } = useSort({
-      arrayToSort: sortedArray,
-      setSortedArray,
+    const {
+      sortedArray,
+      iterableSort,
+      reset,
+      tickCount,
+      isSorted,
+      red,
+      green,
+      blue,
+    } = useSort({
+      arrayToSort: randomizedArrayOfNumbers,
     });
+
+    // const sortGeneratorRef = useRef(makeIterable());
 
     useEffect(() => {
       if (isSorted) {
@@ -37,14 +44,14 @@ export const SortContainer: React.FC<SortContainerProps> = memo(
 
       if (isSorting) {
         interval = setInterval(() => {
-          tick();
+          iterableSort.current.next();
         }, tickLength);
-      } else {
+      } else if (interval) {
         clearInterval(interval);
       }
 
       return () => clearInterval(interval);
-    }, [isSorting, tickLength, tick]);
+    }, [isSorting, tickLength, iterableSort]);
 
     return (
       <div className="sort-container">
@@ -84,8 +91,7 @@ export const SortContainer: React.FC<SortContainerProps> = memo(
           <button
             disabled={isSorting || isSorted}
             onClick={async () => {
-              await new Promise((resolve) => setTimeout(resolve, tickLength));
-              tick();
+              iterableSort.current.next();
             }}
           >
             Step
@@ -93,7 +99,6 @@ export const SortContainer: React.FC<SortContainerProps> = memo(
           <button
             disabled={isSorting}
             onClick={() => {
-              setSortedArray(randomizedArrayOfNumbers);
               reset();
             }}
           >
@@ -105,7 +110,7 @@ export const SortContainer: React.FC<SortContainerProps> = memo(
               id="volume"
               name="volume"
               min="0"
-              max="200"
+              max="500"
               step="2"
               value={tickLength}
               onChange={(event) => setTickLength(Number(event.target.value))}

@@ -1,13 +1,11 @@
-import { Dispatch, SetStateAction } from 'react';
-
 export interface UseSortParams {
   arrayToSort: number[];
-  setSortedArray: Dispatch<SetStateAction<number[]>>;
 }
 
 export type UseSort = (params: UseSortParams) => {
-  sort: () => void;
-  tick: () => void;
+  sortedArray: number[];
+  sort: () => Generator<undefined, void, unknown>;
+  iterableSort: React.MutableRefObject<Generator<undefined, void, unknown>>;
   reset: () => void;
   tickCount: number;
   isSorted: boolean;

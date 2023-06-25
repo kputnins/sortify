@@ -1,78 +1,78 @@
-import { useRef, useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 
 import { UseSort } from './types';
 
-export const useBubbleSort: UseSort = ({ arrayToSort, setSortedArray }) => {
-  const outer = useRef<number>();
-  const inner = useRef<number>();
-
+export const useBubbleSort: UseSort = ({ arrayToSort }) => {
+  const [sortedArray, setSortedArray] = useState<number[]>(arrayToSort);
   const [isSorted, setIsSorted] = useState<boolean>(false);
   const [tickCount, setTickCount] = useState<number>(0); // set in state to force a re-render on change
+  const [red, setRed] = useState<number[]>([]);
   const [green, setGreen] = useState<number[]>([]);
+  const [blue, setBlue] = useState<number[]>([]);
 
-  const reset = useCallback(() => {
-    outer.current = 0;
-    inner.current = 0;
-    setTickCount(0);
-
-    setIsSorted(false);
-    setGreen([]);
-  }, []);
+  const arrayHash = sortedArray.join();
 
   useEffect(() => {
-    reset();
-  }, [reset]);
-
-  useEffect(() => {
-    if (arrayToSort.every((number, index) => number === index)) {
+    if (sortedArray.every((number, index) => number === index)) {
       setIsSorted(true);
-      setGreen(arrayToSort);
+      setGreen(sortedArray);
     } else {
       setIsSorted(false);
     }
+  }, [sortedArray, arrayHash]);
+
+  const sort = useCallback(
+    function* (): Generator<undefined, void, unknown> {
+      const newArray = [...sortedArray];
+      for (let i = 0; i < newArray.length; i++) {
+        for (let j = 0; j < newArray.length - i - 1; j++) {
+          if (newArray[j] > newArray[j + 1]) {
+            setBlue([j + 2]);
+            setRed([j + 1]);
+
+            const temp = newArray[j];
+            newArray[j] = newArray[j + 1];
+            newArray[j + 1] = temp;
+
+            setSortedArray(newArray);
+            setTickCount((previousValue) => previousValue + 1);
+
+            yield;
+          }
+        }
+
+        setGreen((previousValue) => [
+          ...previousValue,
+          newArray.length - i - 1,
+        ]);
+      }
+    },
+    [sortedArray, setSortedArray],
+  );
+
+  const reset = useCallback(() => {
+    setSortedArray(arrayToSort);
+    setIsSorted(false);
+    setTickCount(0);
+
+    setRed([]);
+    setBlue([]);
+    setGreen([]);
+
+    iterableSort.current = sort();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [arrayToSort]);
 
-  const sort = useCallback(() => {
-    const { current: i } = outer;
-    const { current: j } = inner;
-
-    if (i !== undefined && j !== undefined) {
-      const newArray = [...arrayToSort];
-
-      if (i < newArray.length) {
-        const elementToMove = newArray[j];
-
-        if (elementToMove > newArray[j + 1]) {
-          newArray[j] = newArray[j + 1];
-          newArray[j + 1] = elementToMove;
-
-          setSortedArray(newArray);
-        }
-
-        inner.current = j + 1;
-
-        if (j === newArray.length - 1 - i) {
-          outer.current = i + 1;
-          inner.current = 0;
-          setGreen(
-            Array.from(Array(arrayToSort.length).keys()).slice(-outer.current),
-          );
-        }
-      }
-    }
-  }, [arrayToSort, setSortedArray]);
-
-  const tick = useCallback(() => {
-    sort();
-    setTickCount((previousValue) => previousValue + 1);
-  }, [sort]);
+  const iterableSort = useRef(sort());
 
   return {
+    sortedArray,
     sort,
-    tick,
+    iterableSort,
     reset,
+    red,
     tickCount,
-    blue: [inner.current || 0],
+    blue,
     green,
     isSorted,
   };
