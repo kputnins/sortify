@@ -1,5 +1,5 @@
 import './App.scss';
-import { useBubbleSort } from './algorithms';
+import { useBubbleSort, useQuickSort } from './algorithms';
 import { SortContainer } from './components';
 import { RandomWithSeed } from './utils/Random';
 
@@ -21,6 +21,11 @@ export const App = () => {
         title="Bubble Sort"
         randomizedArrayOfNumbers={[...randomizedArrayOfNumbers]}
         useSort={useBubbleSort}
+      />
+      <SortContainer
+        title="Quick Sort"
+        randomizedArrayOfNumbers={[...randomizedArrayOfNumbers]}
+        useSort={useQuickSort}
       />
     </main>
   );

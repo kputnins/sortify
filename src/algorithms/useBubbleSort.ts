@@ -8,6 +8,7 @@ export const useBubbleSort: UseSort = ({ arrayToSort, setSortedArray }) => {
 
   const [isSorted, setIsSorted] = useState<boolean>(false);
   const [tickCount, setTickCount] = useState<number>(0); // set in state to force a re-render on change
+  const [green, setGreen] = useState<number[]>([]);
 
   const reset = useCallback(() => {
     outer.current = 0;
@@ -15,6 +16,7 @@ export const useBubbleSort: UseSort = ({ arrayToSort, setSortedArray }) => {
     setTickCount(0);
 
     setIsSorted(false);
+    setGreen([]);
   }, []);
 
   useEffect(() => {
@@ -24,6 +26,7 @@ export const useBubbleSort: UseSort = ({ arrayToSort, setSortedArray }) => {
   useEffect(() => {
     if (arrayToSort.every((number, index) => number === index)) {
       setIsSorted(true);
+      setGreen(arrayToSort);
     } else {
       setIsSorted(false);
     }
@@ -51,6 +54,9 @@ export const useBubbleSort: UseSort = ({ arrayToSort, setSortedArray }) => {
         if (j === newArray.length - 1 - i) {
           outer.current = i + 1;
           inner.current = 0;
+          setGreen(
+            Array.from(Array(arrayToSort.length).keys()).slice(-outer.current),
+          );
         }
       }
     }
@@ -67,10 +73,7 @@ export const useBubbleSort: UseSort = ({ arrayToSort, setSortedArray }) => {
     reset,
     tickCount,
     blue: [inner.current || 0],
-    green:
-      (outer.current &&
-        Array.from(Array(arrayToSort.length).keys()).slice(-outer.current)) ||
-      [],
+    green,
     isSorted,
   };
 };

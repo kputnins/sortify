@@ -56,9 +56,9 @@ export const SortContainer: React.FC<SortContainerProps> = memo(
             <div
               key={number}
               className={classNames('column', {
+                blue: blue?.includes(index),
                 red: red?.includes(index),
                 green: green?.includes(index),
-                blue: blue?.includes(index),
               })}
               style={{
                 height: `${
@@ -91,6 +91,7 @@ export const SortContainer: React.FC<SortContainerProps> = memo(
             Step
           </button>
           <button
+            disabled={isSorting}
             onClick={() => {
               setSortedArray(randomizedArrayOfNumbers);
               reset();
